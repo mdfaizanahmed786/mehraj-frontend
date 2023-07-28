@@ -68,7 +68,7 @@ export default function Departments() {
   ];
   
   const {data: departments, isLoading}=useQuery({
-    queryKey:['department'],
+    queryKey:['departments'],
     queryFn: async () => {
       const {data} = await axios.get('http://localhost:5000/v1/department/getAllDepartments');
       return data;

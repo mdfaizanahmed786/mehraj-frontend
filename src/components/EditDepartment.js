@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
 import { Container, Stack, Box } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom"
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 const EditDepartment = () => {
   const departmentId=useParams().departmentId;
+    const queryClient=useQueryClient();
   const [department, setDepartment] = useState({
     name: '',
     description: '',
@@ -22,6 +23,7 @@ const EditDepartment = () => {
       return response.data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries('departments')
       navigate('/departments');
     },
     enabled:!!departmentId

@@ -1,22 +1,35 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Stack, Box } from '@mui/material';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from 'react-query';
+import axios from 'axios';
 
 
 const AddDepartment = () => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState('');
-  const [icon, setIcon]= useState('');
-  const [status, setStatus] = useState('enabled');
+  const queryClient=useQueryClient();
+  const [department, setDepartment] = useState({
+    name: '',
+    description: '',
+    icon: '',
+    status: false
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  });
+  const navigate = useNavigate();
 
-    setName('');
-    setDescription('');
-    setIcon('');
-    setStatus('enabled');
-  };
+  const {mutate:addDepartment, isLoading}=useMutation({
+    mutationFn: async (newDepartment) => {
+      const response = await axios.post(`http://localhost:5000/v1/department/addDepartment`, newDepartment);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries('departments');
+      navigate('/departments');
+    },
+
+ 
+  })
+
+
 
   return (
     <Box style={{backgroundColor:'grey'}}>
@@ -24,15 +37,15 @@ const AddDepartment = () => {
       <div style={{  padding: '20px', borderRadius: '10px' }}></div>
     <React.Fragment>
     <h2 style={{ textAlign: 'top' }}>Add Department</h2>
-      <form style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px' }} onSubmit={handleSubmit} action={<Link to="/departments" />}>
+      <form style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px' }} onSubmit={e=>e.preventDefault()} action={<Link to="/departments" />}>
            <Stack spacing={2} direction="row" sx={{marginBottom: 4}}></Stack>
         <label htmlFor="name">Department Name:</label>
         <input className='Formelement'
         type="text"
         variant='outlined'
-        value={name}
+        value={department.name}
         fullWidth
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => setDepartment({...department,name:e.target.value})}
         required
       /><br /><br />
 
@@ -40,8 +53,9 @@ const AddDepartment = () => {
       <textarea
         id="description"
         variant='outlined'
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        value={department.description}
+        onChange={(e) => setDepartment({...department,description:e.target.value})
+        }
         rows="4"
         cols="50"
         required
@@ -52,24 +66,27 @@ const AddDepartment = () => {
         type="text"
         variant='outlined'
         id="icon"
-        value={icon}
+        value={department.icon}
         fullWidth
-        onChange={(e) => setIcon(e.target.value)}
+        onChange={(e) => setDepartment({...department, icon:e.target.value})}
         required
       /><br /><br />
 
       <label htmlFor="status">Status:</label>
       <select
         id="status"
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
+        value={department.status}
+        onChange={(e) => setDepartment({...department, status:e.target.value})
+        }
         required
       >
-        <option value="enabled">Enabled</option>
-        <option value="disabled">Disabled</option>
+        <option value={true}>Enabled</option>
+        <option value={false}>Disabled</option>
       </select><br /><br />
 
-      <input style={{color:"grey"}} type="submit" value="Add Department" />
+      <Button style={{background:"grey"}} type="submit" variant="contained" color="primary" onClick={()=>addDepartment(department)}>{
+        isLoading ? 'Loading...' : 'Add Department'
+      }</Button>
     </form>
     </React.Fragment>
   </div> 
