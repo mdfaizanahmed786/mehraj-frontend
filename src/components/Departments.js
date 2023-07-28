@@ -8,20 +8,22 @@ import axios from 'axios';
 import * as React from 'react';
 
 
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 
 
 
-const ActionBtn =() =>{
+const ActionBtn =({editAction, deleteAction}) =>{
   return  <Stack direction="row" alignItems="center" spacing={1}>
-  <IconButton aria-aria-label="view" size="medium">
+  <IconButton  size="medium">
     <RemoveRedEyeIcon fontSize="inherit"/>  
   </IconButton>
-  <IconButton aria-aria-label="edit" size="medium">
+  <Link to={editAction} style={{textDecoration:'none'}}>
+  <IconButton  size="medium">
     <CreateIcon fontSize="inherit"/>  
   </IconButton>  
-  <IconButton aria-aria-label="delete" size="medium">
+  </Link>
+  <IconButton  size="medium" onClick={deleteAction}>
     <DeleteIcon fontSize="inherit"/>  
   </IconButton>    
   </Stack>
@@ -31,6 +33,19 @@ const ActionBtn =() =>{
 
 
 export default function Departments() {
+  const queryClient=useQueryClient();
+  
+  const {mutate:deleteDepart, isLoading}=useMutation({
+    mutationFn: async (departmentId) => {
+      const response = await axios.delete(`http://localhost:5000/v1/department/deleteDepartment/${departmentId}`);
+      return response.data;
+    }
+    ,
+    onSuccess: () => {
+      alert('Department Deleted Successfully');
+      queryClient.invalidateQueries('departments');
+    },
+  })
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -60,14 +75,14 @@ export default function Departments() {
       renderCell:(value) => {
      
         return(
-  <Link to={`/departments/EditDepartments/${value.row.id}`} style={{textDecoration:'none'}}><ActionBtn/></Link>
+  <ActionBtn editAction={`/departments/EditDepartments/${value.row.id}`} deleteAction={()=>deleteDepart(value.id)}/>
        
         );
       }
     },
   ];
   
-  const {data: departments, isLoading}=useQuery({
+  const {data: departments}=useQuery({
     queryKey:['departments'],
     queryFn: async () => {
       const {data} = await axios.get('http://localhost:5000/v1/department/getAllDepartments');
@@ -75,6 +90,7 @@ export default function Departments() {
     }
   
   })
+
 
   const rows = departments?.departments?.map((department) => {
     return {
