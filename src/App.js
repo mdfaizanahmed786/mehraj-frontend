@@ -1,7 +1,7 @@
 import "./App.css"
 import Sidebar from "./components/Sidebar";
 import SearchAppBar from "./components/Navbar";
-import {Routes,Route} from 'react-router-dom';
+import {Routes,Route, useLocation, Navigate, useNavigate} from 'react-router-dom';
 import Departments from "./components/Departments";
 import Scholarships from "./components/Scholarships";
 import AddDepartment from "./components/AddDepartment";
@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 function App() {
+  const location=useLocation();
+  const navigate=useNavigate();
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -19,6 +21,13 @@ function App() {
       },
     },
   })
+  useEffect(()=>{
+    console.log(location.pathname)
+    if(location.pathname==='/' || location.pathname==='/home'){
+      navigate('/departments')
+    }
+
+  },[location])
   return (
     <QueryClientProvider client={queryClient}>
     <div Classname="App">
