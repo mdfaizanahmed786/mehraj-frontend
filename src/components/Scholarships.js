@@ -2,24 +2,28 @@ import React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import CreateIcon from "@mui/icons-material/Create";
-import { IconButton, Stack } from "@mui/material";
+import { Box, IconButton, Modal, Stack, Typography } from "@mui/material";
 import { useQuery } from "react-query";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-const ActionScho = () => {
+const ActionScho = ({editAction, viewAction}) => {
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
-      <IconButton size="medium">
+      <IconButton size="medium" onClick={viewAction}>
         <RemoveRedEyeIcon fontSize="inherit" />
       </IconButton>
-      <IconButton size="medium">
+      <Link to={editAction} style={{ textDecoration: "none" }}>
+      <IconButton size="medium" >
         <CreateIcon fontSize="inherit" />
       </IconButton>
+      </Link>
     </Stack>
   );
 };
 
 const Scholarship = () => {
+  const [studentId, setStudentId] = React.useState('');
   const { data: students } = useQuery({
     queryKey: ["students"],
     queryFn: async () => {
@@ -29,7 +33,7 @@ const Scholarship = () => {
       return data;
     },
   });
-  console.log(students, "DDDD");
+
 
   const rows = students?.students?.map((student) => {
     return {
@@ -42,6 +46,29 @@ const Scholarship = () => {
       createdAt: student.createdAt,
     };
   });
+
+
+
+  const { data } = useQuery({
+    queryKey: ["students", studentId],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `http://localhost:5000/v1/student/getSingleStudentById/${studentId}`
+      );
+      return data;
+    },
+    enabled: !!studentId,
+  });
+
+
+  console.log(data)
+
+
+
+
+
+
+
 
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -60,13 +87,45 @@ const Scholarship = () => {
       field: "Actions",
       headerName: "Actions",
       width: 300,
-      renderCell: () => {
-        return <ActionScho />;
+      renderCell: (value) => {
+        return <ActionScho  editAction={`/scholarship/studentdetails/${value.row.id}`} viewAction={()=>setStudentId(value.row.id)}/>;
       },
     },
   ];
 
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
+
   return (
+    <>
+    <Modal
+        open={!!studentId}
+        handleClose={() => setStudentId("")}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box style={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Department Details
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            {data?.student?.firstName}
+            {data?.student?.lastName}
+            {data?.student?.age}
+            {data?.student?.gender}
+          </Typography>
+          <div onClick={()=>setStudentId("")} style={{marginTop:"60px"}}>Close</div>
+        </Box>
+      </Modal>
     <div
       style={{
         height: 400,
@@ -78,6 +137,7 @@ const Scholarship = () => {
       <h1>Student Application</h1>
       <DataGrid columns={columns} rows={rows || []} pageSize={5} />
     </div>
+    </>
   );
 };
 

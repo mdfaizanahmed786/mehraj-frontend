@@ -31,9 +31,5 @@ export const SidebarData=[
       icon:<SellIcon/>,
       path:"/scholarship/payment",
      },
-  { 
-      name:"Student Details",
-      icon:<SellIcon/>,
-      path:"/scholarship/studentdetails",
-     }
+ 
 ]
