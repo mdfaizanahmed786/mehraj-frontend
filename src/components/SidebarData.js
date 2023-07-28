@@ -21,4 +21,19 @@ export const SidebarData=[
       icon:<SellIcon/>,
       path:"/scholarship",
      },
+  { 
+      name:"Add Department",
+      icon:<SellIcon/>,
+      path:"/departments/AddDepartments",
+     },
+  { 
+      name:"Payment",
+      icon:<SellIcon/>,
+      path:"/scholarship/payment",
+     },
+  { 
+      name:"Student Details",
+      icon:<SellIcon/>,
+      path:"/scholarship/studentdetails",
+     }
 ]
