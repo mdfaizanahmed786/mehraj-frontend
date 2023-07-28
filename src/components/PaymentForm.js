@@ -11,8 +11,7 @@ const PaymentForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here, e.g., send data to the server or perform further actions.
-    // You can access the form data using the state variables defined above.
+   
   };
 
   return (

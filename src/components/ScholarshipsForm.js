@@ -79,6 +79,10 @@ const ScholarshipForm = () => {
           
             <Input id="rollNo" style={{fontWeight:'bold', color:'black'}} value={studentData?.rollNo} disabled />
           </FormControl>
+
+          <Button style={{background:"grey"}} type="button" variant="contained" color="primary" onClick={()=>navigate('/scholarship/payment')}>
+          Next
+          </Button>
         </form>
       </Stack>
     </>
