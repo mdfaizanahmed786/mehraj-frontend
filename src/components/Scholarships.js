@@ -61,9 +61,6 @@ const Scholarship = () => {
   });
 
 
-  console.log(data)
-
-
 
 
 
