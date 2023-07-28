@@ -103,7 +103,7 @@ export default function Departments() {
     enabled: !!departmentId,
   });
 
-  console.log(data);
+
 
   const rows = departments?.departments?.map((department) => {
     return {
@@ -144,6 +144,7 @@ export default function Departments() {
             {data?.department?.icon}
             {data?.department?.status}
           </Typography>
+          <div onClick={()=>setDepartmentId("")} style={{marginTop:"60px"}}>Close</div>
         </Box>
       </Modal>
 
