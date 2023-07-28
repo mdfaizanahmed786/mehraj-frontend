@@ -31,7 +31,7 @@ const ActionBtn = ({ editAction, deleteAction, viewAction }) => {
 export default function Departments() {
   const queryClient = useQueryClient();
   const [departmentId, setDepartmentId] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+ 
 
   const { mutate: deleteDepart, isLoading } = useMutation({
     mutationFn: async (departmentId) => {
